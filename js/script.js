@@ -1,18 +1,25 @@
+const root = document.querySelector('.root');
 const placesList = document.querySelector('.places-list');
+
 const addPopup = document.querySelector('.popup_type_add');
 const addPopupOpenButton = document.querySelector('.user-info__button');
 const addPopupCloseButton = document.querySelector('.popup_type_add .popup__close');
-const popupAddButton = document.querySelector('.popup__button');
 
-const editPopupOpenButton = document.querySelector('.user-info__edit-button');
 const editPopup = document.querySelector('.popup_type_edit');
+const editPopupOpenButton = document.querySelector('.user-info__edit-button');
 const editPopupCloseButton = document.querySelector('.popup_type_edit .popup__close');
+
 const personName = document.querySelector('.user-info__name');
 const about = document.querySelector('.user-info__job');
+
 const personNameInput = document.querySelector('.popup__input_type_person-name');
 const aboutInput = document.querySelector('.popup__input_type_about');
 const saveInfoButton = document.querySelector('.popup__button_type_save');
-const root = document.querySelector('.root');
+
+const placeNameInput = document.querySelector('.popup__input_type_name');
+const placeLinkInput = document.querySelector('.popup__input_type_link-url');
+const placeAddButton = document.querySelector('.popup__button');
+
 const imagePopup = document.querySelector('.popup_type_image');
 const imagePopupCloseButton = document.querySelector('.popup_type_image .popup__close');
 
@@ -73,15 +80,11 @@ function addNewCard(event) {
   const name = document.querySelector('.popup__input_type_name');
   const link = document.querySelector('.popup__input_type_link-url');
 
-  if (name.value.length === 0 || link.value.length === 0) {
-    alert('Заполните поля');
-  } else {
-    togglePopup(addPopup);
-    addCard(name.value, link.value);
+  togglePopup(addPopup);
+  addCard(name.value, link.value);
 
-    name.value = '';
-    link.value = '';
-  }
+  name.value = '';
+  link.value = '';
 }
 
 
@@ -97,7 +100,6 @@ function deleteCard(event) {
     placesList.removeChild(event.target.closest('.place-card'));
   }
 }
-
 
 
 function fillInputs() {
@@ -139,6 +141,15 @@ function deleteBigPhoto() {
 }
 
 
+function disabler(input1, input2, button) {
+  if ( input1.value.length === 0 || input2.value.length === 0 ) {
+    button.setAttribute('disabled', '')
+  } else if (input1.value.length != 0 && input2.value.length != 0) {
+    button.removeAttribute('disabled', '');
+  }
+}
+
+
 
 
 
@@ -151,7 +162,7 @@ addPopupOpenButton.addEventListener('click', () => { togglePopup(addPopup); });
 addPopupCloseButton.addEventListener('click', () => { togglePopup(addPopup) });
 
 placesList.addEventListener('click', like);
-popupAddButton.addEventListener('click', addNewCard);
+placeAddButton.addEventListener('click', addNewCard);
 placesList.addEventListener('click', deleteCard);
 
 editPopupOpenButton.addEventListener('click', () => { togglePopup(editPopup) });
@@ -166,6 +177,16 @@ imagePopupCloseButton.addEventListener('click', () => {
    togglePopup(imagePopup);
    deleteBigPhoto();
 });
+
+personNameInput.addEventListener('keyup', () => { disabler(personNameInput, aboutInput, saveInfoButton) });
+aboutInput.addEventListener('keyup', () => { disabler(personNameInput, aboutInput, saveInfoButton) });
+
+placeNameInput.addEventListener('keyup', () => { disabler(placeNameInput, placeLinkInput, placeAddButton) });
+placeLinkInput.addEventListener('keyup', () => { disabler(placeNameInput, placeLinkInput, placeAddButton) });
+
+
+
+
 
 
 renderInitCards();

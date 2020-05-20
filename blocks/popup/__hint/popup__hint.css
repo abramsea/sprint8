@@ -1,3 +1,5 @@
+@import url(./_active/popup__hint_active.css);
+
 .popup__hint {
     position: relative;
     font-size: 12px;
