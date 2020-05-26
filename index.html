@@ -32,11 +32,11 @@
         <img src="./images/close.svg" alt="" class="popup__close">
         <h3 class="popup__title">Новое место</h3>
         <form class="popup__form" name="new">
-            <input type="text" name="name" class="popup__input popup__input_type_name" placeholder="Название" required>
-            <p class="popup__hint"></p>
-            <input type="url" name="link" class="popup__input popup__input_type_link-url" placeholder="Ссылка на картинку" required>
-            <p class="popup__hint"></p>
-            <button type class="button popup__button" disabled>+</button>
+            <input type="text" name="name" id="name" minlength="2" maxlength="30" class="popup__input popup__input_type_name" placeholder="Название" required>
+            <p class="popup__hint" id="name-hint"></p>
+            <input type="url" name="link" id="link" class="popup__input popup__input_type_link-url" placeholder="Ссылка на картинку" required>
+            <p class="popup__hint" id="link-hint"></p>
+            <button type="submit" class="button popup__button" disabled>+</button>
         </form>
       </div>
     </div>
@@ -46,11 +46,11 @@
         <img src="./images/close.svg" alt="" class="popup__close">
         <h3 class="popup__title">Редактировать профиль</h3>
         <form class="popup__form" name="edit">
-            <input type="text" name="name" class="popup__input popup__input_type_person-name" placeholder="Имя" required>
-            <p class="popup__hint"></p>
-            <input type="text" name="about" class="popup__input popup__input_type_about" placeholder="О себе" required>
-            <p class="popup__hint"></p>
-            <button type class="button popup__button popup__button_type_save">Сохранить</button>
+            <input type="text" name="person-name" id="person-name" minlength="2" maxlength="30" class="popup__input popup__input_type_person-name" placeholder="Имя" required>
+            <p class="popup__hint" id="person-name-hint"></p>
+            <input type="text" name="about" id="about" minlength="2" maxlength="30" class="popup__input popup__input_type_about" placeholder="О себе" required>
+            <p class="popup__hint" id="about-hint"></p>
+            <button type="submit" class="button popup__button popup__button_type_save">Сохранить</button>
         </form>
       </div>
     </div>

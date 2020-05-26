@@ -1,4 +1,7 @@
-const root = document.querySelector('.root');
+/*
+ Можно лучше:
+ - Убрать неиспользуемые переменные                                             OK
+*/
 const placesList = document.querySelector('.places-list');
 
 const addPopup = document.querySelector('.popup_type_add');
@@ -18,10 +21,15 @@ const saveInfoButton = document.querySelector('.popup__button_type_save');
 
 const placeNameInput = document.querySelector('.popup__input_type_name');
 const placeLinkInput = document.querySelector('.popup__input_type_link-url');
-const placeAddButton = document.querySelector('.popup__button');
+/*
+ Можно лучше:
+ - Убрать неиспользуемые переменные                                                     
+*/
+const placeAddButton = document.querySelector('.popup_type_add .popup__button');
 
 const imagePopup = document.querySelector('.popup_type_image');
 const imagePopupCloseButton = document.querySelector('.popup_type_image .popup__close');
+
 
 
 
@@ -58,12 +66,12 @@ function makeCard(name, link) {
   cardDescription.appendChild(cardLike);
 
   return card;
-}
+};
 
 
 function addCard(name, link) {
   placesList.appendChild(makeCard(name, link));
-}
+};
 
 function renderInitCards() {
   initialCards.forEach((item) => addCard(item.name, item.link));
@@ -72,32 +80,34 @@ function renderInitCards() {
 
 function togglePopup(popup) {
   popup.classList.toggle('popup_is-opened');
-}
+};
+
 
 
 function addNewCard(event) {
-  event.preventDefault();
-  const name = document.querySelector('.popup__input_type_name');
-  const link = document.querySelector('.popup__input_type_link-url');
-
   togglePopup(addPopup);
-  addCard(name.value, link.value);
-
-  name.value = '';
-  link.value = '';
-}
-
-
-function like(event) {
-  if (event.target.classList.contains('place-card__like-icon')) {
-    event.target.classList.toggle('place-card__like-icon_liked');
-  }
-}
+  addCard(placeNameInput.value, placeLinkInput.value);
+  placeAddButton.setAttribute('disabled', '');
+  event.target.parentNode.reset();
+};
 
 
-function deleteCard(event) {
+
+
+
+
+function clickOnCard(event) {
   if (event.target.classList.contains('place-card__delete-icon')) {
     placesList.removeChild(event.target.closest('.place-card'));
+  } else if (event.target.classList.contains('place-card__like-icon')) {
+    event.target.classList.toggle('place-card__like-icon_liked');
+  } else if (event.target.classList.contains('place-card__image')) {
+    /*
+     Отлично:
+     - Используется event.target
+    */
+    makeBigPhoto(event);
+    togglePopup(imagePopup);
   }
 }
 
@@ -105,6 +115,7 @@ function deleteCard(event) {
 function fillInputs() {
   personNameInput.value = personName.textContent;
   aboutInput.value = about.textContent;
+  saveInfoButton.removeAttribute('disabled', '');
 }
 
 
@@ -115,38 +126,30 @@ function saveInfo(event) {
   togglePopup(editPopup);
 }
 
+
 function makeBigPhoto(event) {
   if (event.target.classList.contains('place-card__image')) {
     const url = event.target.getAttribute('data');
-
     const imageBox = document.querySelector('.popup__image-box');
     const popupImage = document.createElement('img');
+
     popupImage.classList.add('popup__image');
     popupImage.setAttribute('src',url);
     popupImage.setAttribute('alt','');
-
     imageBox.appendChild(popupImage);
   }
 }
 
-function openPhoto(event) {
-  if (event.target.classList.contains('place-card__image')) {
-    makeBigPhoto(event);
-    togglePopup(imagePopup);
-  }
-}
 
 function deleteBigPhoto() {
   document.querySelector('.popup__image-box').removeChild(document.querySelector('.popup__image'));
 }
 
 
-function disabler(input1, input2, button) {
-  if ( input1.value.length === 0 || input2.value.length === 0 ) {
-    button.setAttribute('disabled', '')
-  } else if (input1.value.length != 0 && input2.value.length != 0) {
-    button.removeAttribute('disabled', '');
-  }
+function resetInputs(event) {
+  event.target.parentNode.querySelectorAll('.form__input').forEach((input) => {
+    input.value = '';
+  });
 }
 
 
@@ -155,39 +158,161 @@ function disabler(input1, input2, button) {
 
 
 
+function setSubmitButtonState(button, state) {                                                           
+  if ( state ) {
+    button.closest('.popup__form').querySelector('.popup__button').removeAttribute('disabled', '');
+  } else if ( !state )  {
+    button.closest('.popup__form').querySelector('.popup__button').setAttribute('disabled', '');
+  }
+}
 
 
-addPopupOpenButton.addEventListener('click', () => { togglePopup(addPopup); });
 
+
+function isValid(input) {
+  input.setCustomValidity ('');
+
+  if (input.validity.valueMissing) {
+    input.setCustomValidity ('Это обязательное поле');
+    return false
+  }
+  if (input.validity.tooLong || input.validity.tooShort) {
+    input.setCustomValidity ('Должно быть от 2 до 30 символов');
+    return false
+  }
+  if (input.validity.typeMismatch && input.type === 'url') {
+    input.setCustomValidity ('Это не ссылка');
+    return false
+  }
+  return input.checkValidity();
+}
+
+
+
+function isFieldValid(input) {
+  const errorElem = input.parentNode.querySelector(`#${input.id}-hint`);
+  const answer = isValid(input);
+  if (errorElem !== null ) {
+    errorElem.textContent = input.validationMessage;
+  }
+  return answer;
+}
+
+
+
+function isFormValid(form) {
+  const inputs = [...form.elements];
+  let valid = true;
+  inputs.forEach((input) => {
+    if (input.type !== 'submit' && input.type !== 'button') {
+      if (!isFieldValid(input)) { 
+        valid = false;
+      }
+    }
+  });
+  return valid
+}
+
+
+
+
+function handlerInputForm(event) {
+  const submit = event.currentTarget.querySelector('.button');
+  const [...inputs] = event.currentTarget.elements;
+  
+  isFieldValid(event.target);
+
+  if (inputs.every(isFieldValid)) {
+    setSubmitButtonState(submit, true);
+  } else {
+    setSubmitButtonState(submit, false);
+  }
+}
+
+
+
+function sendForm(event) {
+  event.preventDefault();
+  const currentForm = event.target;
+  const isValid = isFormValid(currentForm);
+
+  if (isValid) {
+    event.currentTarget.reset();
+  }
+}
+
+
+function setEventListeners(popup) {                                   
+  popup.querySelector('.popup__form').addEventListener('input', handlerInputForm);
+  popup.querySelector('.popup__form').addEventListener('submit', sendForm)
+      /*  
+       - Слушатели должны быть назначены на элементы                                        OK
+      */
+}
+
+
+function resetErrors(popup) {
+  const currentForm = popup.querySelector('.popup__form');
+  currentForm.reset();
+  document.querySelectorAll('.popup__hint').forEach((hint) => {
+    hint.textContent = '';
+  })
+}
+
+
+
+addPopupOpenButton.addEventListener('click', () => { togglePopup(addPopup) });
 addPopupCloseButton.addEventListener('click', () => { togglePopup(addPopup) });
 
-placesList.addEventListener('click', like);
 placeAddButton.addEventListener('click', addNewCard);
-placesList.addEventListener('click', deleteCard);
+placesList.addEventListener('click', clickOnCard);
 
-editPopupOpenButton.addEventListener('click', () => { togglePopup(editPopup) });
+editPopupOpenButton.addEventListener('click', () => { togglePopup(editPopup), fillInputs() });
+editPopupCloseButton.addEventListener('click', () => { togglePopup(editPopup), resetErrors(editPopup)});
 
-editPopupCloseButton.addEventListener('click', () => { togglePopup(editPopup) });
-
-editPopupOpenButton.addEventListener('click', fillInputs);
 saveInfoButton.addEventListener('click', saveInfo);
-placesList.addEventListener('click', openPhoto);
 
 imagePopupCloseButton.addEventListener('click', () => {
    togglePopup(imagePopup);
    deleteBigPhoto();
 });
 
-personNameInput.addEventListener('keyup', () => { disabler(personNameInput, aboutInput, saveInfoButton) });
-aboutInput.addEventListener('keyup', () => { disabler(personNameInput, aboutInput, saveInfoButton) });
-
-placeNameInput.addEventListener('keyup', () => { disabler(placeNameInput, placeLinkInput, placeAddButton) });
-placeLinkInput.addEventListener('keyup', () => { disabler(placeNameInput, placeLinkInput, placeAddButton) });
-
-
-
-
-
 
 renderInitCards();
 
+setEventListeners(addPopup);
+setEventListeners(editPopup);
+
+/*
+ Что понравилось:
+ - Код структурирован
+ - Код разбит на небольшие функции, у функций ясные имена
+ - Форма "Новое место" валидируется
+ Можно лучше:
+ - Объеденить функции лайка, удаления и открытия попапа картинки                                                              OK
+ - Инпут попапа "Новое место" не валидируется на корректность введеной ссылки
+ - Есть проблемы с форматированием кода
+ Надо исправить:
+ - Слушатели одной кнопки необходимо объеденить. Например, слушатель кнопки editPopupOpenButton 'click', должен быть
+ объявлен только один раз      
+                                                                                                OK
+ Баг #1
+ 1) Запустить приложение
+ 2) Открыть попап редактирования формы
+ 3) Убрать текст из первого инпута -> кнопка добавления не заблокирована                                  OK
+ Баг #2
+ 1) Запустить приложение
+ 2) Открыть попап редактирования формы
+ 3) Убрать текст из инпутов                                                                                       OK
+ 4) Закрыть попап
+ 5) Переоткрыть попап -> инпуты заполнены, но ошибки валидации не ушли + кнопка заблокирована                  
+ Баг #3
+ 1) Запустить приложение
+ 2) Открыть попап добавления карточки                                                                           OK
+ 3) Начать заполнять первый инпут -> ошибки валидации возникают в обоих инпутах                                    
+ Баг #4
+ 1) Запустить приложение
+ 2) Открыть попап добавления карточки
+ 3) Добавить карточку
+ 4) Открыть попап "Новое место" -> можно добавлять карточку с пустыми инпутами                                OK
+*/
