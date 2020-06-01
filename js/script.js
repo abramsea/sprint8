@@ -1,7 +1,3 @@
-/*
- Можно лучше:
- - Убрать неиспользуемые переменные                                             OK
-*/
 const placesList = document.querySelector('.places-list');
 
 const addPopup = document.querySelector('.popup_type_add');
@@ -21,10 +17,7 @@ const saveInfoButton = document.querySelector('.popup__button_type_save');
 
 const placeNameInput = document.querySelector('.popup__input_type_name');
 const placeLinkInput = document.querySelector('.popup__input_type_link-url');
-/*
- Можно лучше:
- - Убрать неиспользуемые переменные                                                     
-*/
+
 const placeAddButton = document.querySelector('.popup_type_add .popup__button');
 
 const imagePopup = document.querySelector('.popup_type_image');
@@ -102,10 +95,6 @@ function clickOnCard(event) {
   } else if (event.target.classList.contains('place-card__like-icon')) {
     event.target.classList.toggle('place-card__like-icon_liked');
   } else if (event.target.classList.contains('place-card__image')) {
-    /*
-     Отлично:
-     - Используется event.target
-    */
     makeBigPhoto(event);
     togglePopup(imagePopup);
   }
@@ -245,9 +234,6 @@ function sendForm(event) {
 function setEventListeners(popup) {                                   
   popup.querySelector('.popup__form').addEventListener('input', handlerInputForm);
   popup.querySelector('.popup__form').addEventListener('submit', sendForm)
-      /*  
-       - Слушатели должны быть назначены на элементы                                        OK
-      */
 }
 
 
@@ -282,37 +268,3 @@ renderInitCards();
 
 setEventListeners(addPopup);
 setEventListeners(editPopup);
-
-/*
- Что понравилось:
- - Код структурирован
- - Код разбит на небольшие функции, у функций ясные имена
- - Форма "Новое место" валидируется
- Можно лучше:
- - Объеденить функции лайка, удаления и открытия попапа картинки                                                              OK
- - Инпут попапа "Новое место" не валидируется на корректность введеной ссылки
- - Есть проблемы с форматированием кода
- Надо исправить:
- - Слушатели одной кнопки необходимо объеденить. Например, слушатель кнопки editPopupOpenButton 'click', должен быть
- объявлен только один раз      
-                                                                                                OK
- Баг #1
- 1) Запустить приложение
- 2) Открыть попап редактирования формы
- 3) Убрать текст из первого инпута -> кнопка добавления не заблокирована                                  OK
- Баг #2
- 1) Запустить приложение
- 2) Открыть попап редактирования формы
- 3) Убрать текст из инпутов                                                                                       OK
- 4) Закрыть попап
- 5) Переоткрыть попап -> инпуты заполнены, но ошибки валидации не ушли + кнопка заблокирована                  
- Баг #3
- 1) Запустить приложение
- 2) Открыть попап добавления карточки                                                                           OK
- 3) Начать заполнять первый инпут -> ошибки валидации возникают в обоих инпутах                                    
- Баг #4
- 1) Запустить приложение
- 2) Открыть попап добавления карточки
- 3) Добавить карточку
- 4) Открыть попап "Новое место" -> можно добавлять карточку с пустыми инпутами                                OK
-*/
