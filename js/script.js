@@ -48,84 +48,7 @@ class Card {
   create() {
 
   };
-
 }
-
-
-
-class CardList {
-  constructor(container, array) {
-
-  };
-
-  addCard() {
-
-  };
-
-  render() {
-
-  };
-}
-
-
-
-class Popup {
-  constructor() {
-
-  };
-
-  open() {
-
-  };
-
-  close() {
-
-  };
-}
-
-
-
-
-class UserInfo {
-  constructor() {
-
-  };
-
-  setUserInfo() {
-
-  };
-
-  updateUserInfo() {
-
-  };
-
-
-}
-
-class FormValidatior {
-  constructor(form) { // or (popup)
-
-  };
-
-  checkInputValidity() {
-
-  };
-
-  setSubmitButtonState() {
-
-  };
-
-  setEventListeners() {
-
-  };
-
-}
-
-
-
-
-
-// functions 
 
 
 function makeCard(name, link) {
@@ -159,30 +82,12 @@ function makeCard(name, link) {
   return card;
 };
 
-
-function addCard(name, link) {
-  placesList.appendChild(makeCard(name, link));
-};
-
-function renderInitCards() {
-  initialCards.forEach((item) => addCard(item.name, item.link));
-};
-
-
-function togglePopup(popup) {
-  popup.classList.toggle('popup_is-opened');
-};
-
-
-
 function addNewCard(event) {
   togglePopup(addPopup);
   addCard(placeNameInput.value, placeLinkInput.value);
   placeAddButton.setAttribute('disabled', '');
   event.target.parentNode.reset();
 };
-
-
 
 
 
@@ -197,6 +102,107 @@ function clickOnCard(event) {
     togglePopup(imagePopup);
   }
 }
+
+
+class CardList {
+  constructor(container, array) {
+
+  };
+
+  addCard(name, link) {
+    placesList.appendChild(makeCard(name, link));
+  };
+
+  render() {
+    initialCards.forEach((item) => addCard(item.name, item.link));
+  };
+}
+
+
+
+class Popup {
+  constructor() {
+
+  };
+
+  open(popup) {
+    popup.classList.add('popup_is-opened');
+  };
+
+  close(popup) {
+    popup.classList.remove('popup_is-opened');
+  };
+}
+
+
+
+
+class UserInfo {
+  constructor() {
+
+  };
+
+  setUserInfo() {
+
+  };
+
+  updateUserInfo() {
+
+  };
+
+
+}
+
+class FormValidatior {
+  constructor(form) { // or (popup)
+
+  };
+
+  checkInputValidity() {
+
+  };
+
+  setSubmitButtonState(button, state) {                                                           
+    if ( state ) {
+      button.closest('.popup__form').querySelector('.popup__button').removeAttribute('disabled', '');
+    } else if ( !state )  {
+      button.closest('.popup__form').querySelector('.popup__button').setAttribute('disabled', '');
+    }
+  };
+
+  setEventListeners(popup) {                                   
+    popup.querySelector('.popup__form').addEventListener('input', handlerInputForm);
+    popup.querySelector('.popup__form').addEventListener('submit', sendForm)
+  };
+
+}
+
+
+
+
+// functions 
+
+
+
+
+
+// function addCard(name, link) {
+//   placesList.appendChild(makeCard(name, link));
+// };
+
+// function renderInitCards() {
+//   initialCards.forEach((item) => addCard(item.name, item.link));
+// };
+
+
+// function togglePopup(popup) {
+//   popup.classList.toggle('popup_is-opened');
+// };
+
+
+
+
+
 
 
 function fillInputs() {
@@ -245,13 +251,6 @@ function resetInputs(event) {
 
 
 
-function setSubmitButtonState(button, state) {                                                           
-  if ( state ) {
-    button.closest('.popup__form').querySelector('.popup__button').removeAttribute('disabled', '');
-  } else if ( !state )  {
-    button.closest('.popup__form').querySelector('.popup__button').setAttribute('disabled', '');
-  }
-}
 
 
 
@@ -327,13 +326,6 @@ function sendForm(event) {
     event.currentTarget.reset();
   }
 }
-
-
-function setEventListeners(popup) {                                   
-  popup.querySelector('.popup__form').addEventListener('input', handlerInputForm);
-  popup.querySelector('.popup__form').addEventListener('submit', sendForm)
-}
-
 
 function resetErrors(popup) {
   const currentForm = popup.querySelector('.popup__form');
