@@ -1,3 +1,5 @@
+// variables
+
 const placesList = document.querySelector('.places-list');
 
 const addPopup = document.querySelector('.popup_type_add');
@@ -25,9 +27,105 @@ const imagePopupCloseButton = document.querySelector('.popup_type_image .popup__
 
 
 
+// classes
 
 
 
+class Card {  
+  constructor(name, link) {
+    this.name = name;
+    this.link = link;
+  };
+
+  like() {
+
+  };
+
+  remove() {
+
+  };
+
+  create() {
+
+  };
+
+}
+
+
+
+class CardList {
+  constructor(container, array) {
+
+  };
+
+  addCard() {
+
+  };
+
+  render() {
+
+  };
+}
+
+
+
+class Popup {
+  constructor() {
+
+  };
+
+  open() {
+
+  };
+
+  close() {
+
+  };
+}
+
+
+
+
+class UserInfo {
+  constructor() {
+
+  };
+
+  setUserInfo() {
+
+  };
+
+  updateUserInfo() {
+
+  };
+
+
+}
+
+class FormValidatior {
+  constructor(form) { // or (popup)
+
+  };
+
+  checkInputValidity() {
+
+  };
+
+  setSubmitButtonState() {
+
+  };
+
+  setEventListeners() {
+
+  };
+
+}
+
+
+
+
+
+// functions 
 
 
 function makeCard(name, link) {
@@ -247,6 +345,11 @@ function resetErrors(popup) {
 
 
 
+
+
+// event listeners
+
+
 addPopupOpenButton.addEventListener('click', () => { togglePopup(addPopup) });
 addPopupCloseButton.addEventListener('click', () => { togglePopup(addPopup) });
 
@@ -262,6 +365,13 @@ imagePopupCloseButton.addEventListener('click', () => {
    togglePopup(imagePopup);
    deleteBigPhoto();
 });
+
+
+
+
+
+
+// function calls
 
 
 renderInitCards();
