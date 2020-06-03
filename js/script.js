@@ -238,10 +238,10 @@ class Popup {
     this.container.appendChild(imageBox);
   }
 
-  setEventListeners() {                              
-    this.container.querySelector('.popup__form').addEventListener('input', handlerInputForm);                                       
-    this.container.querySelector('.popup__form').addEventListener('submit', sendForm);
-  }  
+  // setEventListeners() {                              
+  //   this.container.querySelector('.popup__form').addEventListener('input', handlerInputForm);                       // shouldn't be here                     
+  //   this.container.querySelector('.popup__form').addEventListener('submit', sendForm);
+  // }  
 
   resetErrors() {
     const currentForm = this.container.querySelector('.popup__form');
@@ -272,6 +272,99 @@ class UserInfo {
     about.textContent = this.job;
   }
 }
+
+
+
+
+
+
+class FormValidator {
+  constructor(form) {                        // or (popup)
+    this.form = form;
+  }
+
+  checkInputValidity(input) {                                                 //Метод показывает ошибку, если инпуты не проходят валидацию. бывш. isValid
+    input.setCustomValidity ('');                                                                       
+    if (input.validity.valueMissing) {
+      input.setCustomValidity ('Это обязательное поле');
+      return false
+    }
+    if (input.validity.tooLong || input.validity.tooShort) {
+      input.setCustomValidity ('Должно быть от 2 до 30 символов');
+      return false
+    }
+    if (input.validity.typeMismatch && input.type === 'url') {
+      input.setCustomValidity ('Это не ссылка');
+      return false
+    }
+    return input.checkValidity();
+  }
+
+  isFieldValid(input) {
+    const errorElem = input.parentNode.querySelector(`#${input.id}-hint`);
+    const answer = this.checkInputValidity(input);
+    if (errorElem !== null ) {
+      errorElem.textContent = input.validationMessage;
+    }
+    return answer;
+  }
+
+  isFormValid(form) {
+    const inputs = [...form.elements];
+    let valid = true;
+    inputs.forEach((input) => {
+      if (input.type !== 'submit' && input.type !== 'button') {
+        if (!this.isFieldValid(input)) { 
+          valid = false;
+        }
+      }
+    });
+    return valid
+  }
+
+  handlerInputForm(event) {
+    const submit = event.currentTarget.querySelector('.button');
+    const [...inputs] = event.currentTarget.elements;
+    
+    this.isFieldValid(event.target);
+
+    if (inputs.every(this.isFieldValid)) {
+      setSubmitButtonState(submit, true);
+    } else {
+      setSubmitButtonState(submit, false);
+    }
+  }
+
+  sendForm(event) {
+    event.preventDefault();
+    const currentForm = event.target;
+    const isValid = this.isFormValid(currentForm);
+
+    if (isValid) {
+      event.currentTarget.reset();
+    }
+  }
+                                                                              
+  setSubmitButtonState(button, state) {                                                                   // Этот метод должен вызываться при любом изменении данных формы
+    if ( state ) {
+      button.closest('.popup__form').querySelector('.popup__button').removeAttribute('disabled', '');
+    } else if ( !state )  {
+      button.closest('.popup__form').querySelector('.popup__button').setAttribute('disabled', '');
+    }
+  }
+
+  setEventListeners() {                                                                       //Добавляет необходимые для валидации обработчики всем полям формы.
+    this.form.addEventListener('input', this.handlerInputForm);                                       
+    this.form.addEventListener('submit', this.sendForm);
+  }  
+
+}     
+
+
+
+
+
+
 
 
 
@@ -322,7 +415,10 @@ const imagePopupCloseButton = document.querySelector('.popup_type_image .popup__
 const placesList = document.querySelector('.places-list');
 const initCards = new CardList(placesList, initialCards);
 const addForm = document.forms.new;
+const editForm = document.forms.edit;
 
+const addFormValidator = new FormValidator(addForm);
+const editFormValidator = new FormValidator(editForm);
 
 
 
@@ -339,9 +435,6 @@ function addCard() {                                                          //
   placesList.appendChild(card.create());
   card.setEventListeners();
 }
-
-
-
 
 
 function fillInputs() {
@@ -377,93 +470,6 @@ function resetInputs(event) {
 }
 
 
-
-
-
-
-
-function setSubmitButtonState(button, state) {                                                           
-  if ( state ) {
-    button.closest('.popup__form').querySelector('.popup__button').removeAttribute('disabled', '');
-  } else if ( !state )  {
-    button.closest('.popup__form').querySelector('.popup__button').setAttribute('disabled', '');
-  }
-}
-
-
-
-
-function isValid(input) {
-  input.setCustomValidity ('');
-
-  if (input.validity.valueMissing) {
-    input.setCustomValidity ('Это обязательное поле');
-    return false
-  }
-  if (input.validity.tooLong || input.validity.tooShort) {
-    input.setCustomValidity ('Должно быть от 2 до 30 символов');
-    return false
-  }
-  if (input.validity.typeMismatch && input.type === 'url') {
-    input.setCustomValidity ('Это не ссылка');
-    return false
-  }
-  return input.checkValidity();
-}
-
-
-
-function isFieldValid(input) {
-  const errorElem = input.parentNode.querySelector(`#${input.id}-hint`);
-  const answer = isValid(input);
-  if (errorElem !== null ) {
-    errorElem.textContent = input.validationMessage;
-  }
-  return answer;
-}
-
-
-
-function isFormValid(form) {
-  const inputs = [...form.elements];
-  let valid = true;
-  inputs.forEach((input) => {
-    if (input.type !== 'submit' && input.type !== 'button') {
-      if (!isFieldValid(input)) { 
-        valid = false;
-      }
-    }
-  });
-  return valid
-}
-
-
-
-
-function handlerInputForm(event) {
-  const submit = event.currentTarget.querySelector('.button');
-  const [...inputs] = event.currentTarget.elements;
-  
-  isFieldValid(event.target);
-
-  if (inputs.every(isFieldValid)) {
-    setSubmitButtonState(submit, true);
-  } else {
-    setSubmitButtonState(submit, false);
-  }
-}
-
-
-
-function sendForm(event) {
-  event.preventDefault();
-  const currentForm = event.target;
-  const isValid = isFormValid(currentForm);
-
-  if (isValid) {
-    event.currentTarget.reset();
-  }
-}
 
 
 
@@ -521,6 +527,6 @@ imagePopupCloseButton.addEventListener('click', () => {
 jaques.updateUserInfo();
 initCards.render();
 
-addPopup.setEventListeners();                                                                                       
-editPopup.setEventListeners();
+addFormValidator.setEventListeners();                                                                                       
+editFormValidator.setEventListeners();                                                                                       
 
