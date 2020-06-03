@@ -326,7 +326,7 @@ class FormValidator {
     const submit = event.currentTarget.querySelector('.button');
     const [...inputs] = event.currentTarget.elements;
     
-    this.isFieldValid(event.target);
+    isFieldValid(this.form);
 
     if (inputs.every(this.isFieldValid)) {
       setSubmitButtonState(submit, true);
