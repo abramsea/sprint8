@@ -1,12 +1,264 @@
+class Card {                                                                                 
+  constructor(name, link) {
+    this.name = name;
+    this.link = link;
+  }
+
+  like(event) {
+    event.target.classList.toggle('place-card__like-icon_liked');
+  }
+  
+  remove(event) {
+    placesList.removeChild(event.target.closest('.place-card'));
+  }
+
+  create(name, link) {                                    
+    const card = document.createElement('div');
+    card.classList.add('place-card');
+  
+    const cardImage = document.createElement('div');
+    cardImage.classList.add('place-card__image');
+    cardImage.style = `background-image: url(${this.link})`;
+    cardImage.setAttribute('data', this.link);
+  
+    const cardDeleteButton = document.createElement('button');
+    cardDeleteButton.classList.add('place-card__delete-icon');
+  
+    const cardDescription = document.createElement('div');
+    cardDescription.classList.add('place-card__description');
+  
+    const cardName = document.createElement('h3');
+    cardName.classList.add('place-card__name');
+    cardName.textContent = this.name;
+  
+    const cardLike = document.createElement('button');
+    cardLike.classList.add('place-card__like-icon');
+  
+    card.appendChild(cardImage);
+    cardImage.appendChild(cardDeleteButton);
+    card.appendChild(cardDescription);
+    cardDescription.appendChild(cardName);
+    cardDescription.appendChild(cardLike);
+  
+    this.cardElement = card;
+    return card;
+  }
+
+  setEventListeners() {
+    this.cardElement.querySelector('.place-card__like-icon').addEventListener('click', this.like )
+    this.cardElement.querySelector('.place-card__delete-icon').addEventListener('click', this.remove )
+    this.cardElement.querySelector('.place-card__image').addEventListener('click', function() {
+      if (event.target.classList.contains('place-card__image')) {
+      makeBigPhoto(event);
+      imagePopup.open();
+      }
+    })
+  }
+}
+
+
+class CardList {                                                                                       
+  constructor(container, array) {
+    this.container = container;
+    this.cards = array;
+  }
+  render() {                                              // для отрисовки карточек при загрузке страницы
+    this.cards.forEach( function(card) {
+      card = new Card(card.name, card.link);
+      placesList.appendChild(card.create());
+      card.setEventListeners();
+    })    
+  }
+  addNewCard(card) {                           // принимает на вход экземпляр карточки, для добавления карточки в список. предположительно бывш addNewCard
+    this.cards.push(card);                    // возможно нужно заменить card на cardElement
+    this.container.appendChild(card);
+    this.render();
+  }
+}
+
+
+
+
+class Popup {
+  constructor(container) {
+    this.container = container;
+  }
+
+  open() {
+    this.container.classList.toggle('popup_is-opened');   // заменить начало функции
+  }
+
+  close() {
+    this.container.classList.toggle('popup_is-opened');     // заменить начало функции
+  }
+
+  createAddPopup() {
+    const content = document.createElement('div');
+    content.classList.add('popup__content');
+  
+    const closeBtn = document.createElement('img');
+    closeBtn.classList.add('popup__close');
+    closeBtn.setAttribute('src', './images/close.svg');
+    closeBtn.setAttribute('alt', '');
+  
+    const title = document.createElement('h3');
+    title.classList.add('popup__title');
+    title.textContent = 'Новое место'
+  
+    const form = document.createElement('form');
+    form.classList.add('popup__form');
+    form.setAttribute('name', 'new');
+  
+    const firstInput = document.createElement('input');
+    firstInput.classList.add('popup__input');
+    firstInput.classList.add('popup__input_type_name');
+    firstInput.setAttribute('type', 'text');
+    firstInput.setAttribute('name', 'name');
+    firstInput.setAttribute('id', 'name');
+    firstInput.setAttribute('minlength', '2');
+    firstInput.setAttribute('maxlength', '30');
+    firstInput.setAttribute('placeholder', 'Название');
+    firstInput.setAttribute('required', '');
+  
+    const firstHint = document.createElement('p');
+    firstHint.classList.add('popup__hint');
+    firstHint.setAttribute('id', 'name-hint');
+  
+    const secondInput = document.createElement('input');
+    secondInput.classList.add('popup__input');
+    secondInput.classList.add('popup__input_type_link-url');
+    secondInput.setAttribute('type', 'url');
+    secondInput.setAttribute('name','link');
+    secondInput.setAttribute('id', 'link');
+    secondInput.setAttribute('placeholder', 'Ссылка на картинку');
+    secondInput.setAttribute('required', '');
+  
+    const secondHint = document.createElement('p');
+    secondHint.classList.add('popup__hint');
+    secondHint.setAttribute('id', 'link-hint');
+  
+    const button = document.createElement('button');
+    button.classList.add('button');
+    button.classList.add('popup__button');
+    button.setAttribute('type', 'submit');
+    button.setAttribute('disabled', '');
+    button.textContent = '+'
+  
+  
+    content.appendChild(closeBtn);
+    content.appendChild(title);
+    content.appendChild(form);
+    form.appendChild(firstInput);
+    form.appendChild(firstHint);
+    form.appendChild(secondInput);
+    form.appendChild(secondHint);
+    form.appendChild(button);
+  
+    this.container.appendChild(content);
+  }
+
+  createEditPopup() {
+    const content = document.createElement('div');
+    content.classList.add('popup__content');
+  
+    const closeBtn = document.createElement('img');
+    closeBtn.classList.add('popup__close');
+    closeBtn.setAttribute('src', './images/close.svg');
+    closeBtn.setAttribute('alt', '');
+  
+    const title = document.createElement('h3');
+    title.classList.add('popup__title');
+    title.textContent = 'Редактировать профиль'
+  
+    const form = document.createElement('form');
+    form.classList.add('popup__form');
+    form.setAttribute('name', 'edit');
+  
+    const firstInput = document.createElement('input');
+    firstInput.classList.add('popup__input');
+    firstInput.classList.add('popup__input_type_person-name');
+    firstInput.setAttribute('type', 'text');
+    firstInput.setAttribute('name', 'person-name');
+    firstInput.setAttribute('id', 'person-name');
+    firstInput.setAttribute('minlength', '2');
+    firstInput.setAttribute('maxlength', '30');
+    firstInput.setAttribute('placeholder', 'Имя');
+    firstInput.setAttribute('required', '');
+  
+    const firstHint = document.createElement('p');
+    firstHint.classList.add('popup__hint');
+    firstHint.setAttribute('id', 'person-name-hint');
+  
+    const secondInput = document.createElement('input');
+    secondInput.classList.add('popup__input');
+    secondInput.classList.add('popup__input_type_about');
+    secondInput.setAttribute('type', 'text');
+    secondInput.setAttribute('name','about');
+    secondInput.setAttribute('id', 'about');
+    secondInput.setAttribute('minlength', '2');
+    secondInput.setAttribute('maxlength', '30');
+    secondInput.setAttribute('placeholder', 'О себе');
+    secondInput.setAttribute('required', '');
+  
+    const secondHint = document.createElement('p');
+    secondHint.classList.add('popup__hint');
+    secondHint.setAttribute('id', 'link-hint');
+  
+    const button = document.createElement('button');
+    button.classList.add('button');
+    button.classList.add('popup__button');
+    button.classList.add('popup__button_type_save');
+    button.setAttribute('type', 'submit');
+    button.textContent = 'Сохранить'
+  
+  
+    content.appendChild(closeBtn);
+    content.appendChild(title);
+    content.appendChild(form);
+    form.appendChild(firstInput);
+    form.appendChild(firstHint);
+    form.appendChild(secondInput);
+    form.appendChild(secondHint);
+    form.appendChild(button);
+  
+    this.container.appendChild(content);
+  }
+
+  createImagePopup() {
+    const imageBox = document.createElement('div');
+    imageBox.classList.add('popup__image-box');
+
+    const closeBtn = document.createElement('img');
+    closeBtn.classList.add('popup__close');
+    closeBtn.setAttribute('src', './images/close.svg');
+    closeBtn.setAttribute('alt', '');
+
+    imageBox.appendChild(closeBtn);
+
+    this.container.appendChild(imageBox);
+  }
+}
+
+
+
+// new vars
+
+const addPopup = new Popup(document.querySelector('.popup_type_add'));
+const editPopup = new Popup(document.querySelector('.popup_type_edit'));
+const imagePopup = new Popup(document.querySelector('.popup_type_image'));
+
+
+addPopup.createAddPopup();
+editPopup.createEditPopup();
+imagePopup.createImagePopup();
+
 // variables
 
-const placesList = document.querySelector('.places-list');
 
-const addPopup = document.querySelector('.popup_type_add');
+
 const addPopupOpenButton = document.querySelector('.user-info__button');
 const addPopupCloseButton = document.querySelector('.popup_type_add .popup__close');
 
-const editPopup = document.querySelector('.popup_type_edit');
 const editPopupOpenButton = document.querySelector('.user-info__edit-button');
 const editPopupCloseButton = document.querySelector('.popup_type_edit .popup__close');
 
@@ -22,184 +274,32 @@ const placeLinkInput = document.querySelector('.popup__input_type_link-url');
 
 const placeAddButton = document.querySelector('.popup_type_add .popup__button');
 
-const imagePopup = document.querySelector('.popup_type_image');
 const imagePopupCloseButton = document.querySelector('.popup_type_image .popup__close');
 
 
-
-// classes
-
+// new vars
 
 
-class Card {  
-  constructor(name, link) {
-    this.name = name;
-    this.link = link;
-  };
+const placesList = document.querySelector('.places-list');
+const initCards = new CardList(placesList, initialCards);
+const addForm = document.forms.new;
 
-  like() {
 
-  };
 
-  remove() {
 
-  };
+// functions
 
-  create() {
 
-  };
+
+
+function addCard() {                                                          // THIS WORKS
+  const name = addForm.elements.name;
+  const link = addForm.elements.link;
+  const card = new Card(name.value, link.value);
+
+  placesList.appendChild(card.create());
+  card.setEventListeners();
 }
-
-
-function makeCard(name, link) {
-  const card = document.createElement('div');
-  card.classList.add('place-card');
-
-  const cardImage = document.createElement('div');
-  cardImage.classList.add('place-card__image');
-  cardImage.style = `background-image: url(${link})`;
-  cardImage.setAttribute('data', link);
-
-  const cardDeleteButton = document.createElement('button');
-  cardDeleteButton.classList.add('place-card__delete-icon');
-
-  const cardDescription = document.createElement('div');
-  cardDescription.classList.add('place-card__description');
-
-  const cardName = document.createElement('h3');
-  cardName.classList.add('place-card__name');
-  cardName.textContent = name;
-
-  const cardLike = document.createElement('button');
-  cardLike.classList.add('place-card__like-icon');
-
-  card.appendChild(cardImage);
-  cardImage.appendChild(cardDeleteButton);
-  card.appendChild(cardDescription);
-  cardDescription.appendChild(cardName);
-  cardDescription.appendChild(cardLike);
-
-  return card;
-};
-
-function addNewCard(event) {
-  togglePopup(addPopup);
-  addCard(placeNameInput.value, placeLinkInput.value);
-  placeAddButton.setAttribute('disabled', '');
-  event.target.parentNode.reset();
-};
-
-
-
-
-function clickOnCard(event) {
-  if (event.target.classList.contains('place-card__delete-icon')) {
-    placesList.removeChild(event.target.closest('.place-card'));
-  } else if (event.target.classList.contains('place-card__like-icon')) {
-    event.target.classList.toggle('place-card__like-icon_liked');
-  } else if (event.target.classList.contains('place-card__image')) {
-    makeBigPhoto(event);
-    togglePopup(imagePopup);
-  }
-}
-
-
-class CardList {
-  constructor(container, array) {
-
-  };
-
-  addCard(name, link) {
-    placesList.appendChild(makeCard(name, link));
-  };
-
-  render() {
-    initialCards.forEach((item) => addCard(item.name, item.link));
-  };
-}
-
-
-
-class Popup {
-  constructor() {
-
-  };
-
-  open(popup) {
-    popup.classList.add('popup_is-opened');
-  };
-
-  close(popup) {
-    popup.classList.remove('popup_is-opened');
-  };
-}
-
-
-
-
-class UserInfo {
-  constructor() {
-
-  };
-
-  setUserInfo() {
-
-  };
-
-  updateUserInfo() {
-
-  };
-
-
-}
-
-class FormValidatior {
-  constructor(form) { // or (popup)
-
-  };
-
-  checkInputValidity() {
-
-  };
-
-  setSubmitButtonState(button, state) {                                                           
-    if ( state ) {
-      button.closest('.popup__form').querySelector('.popup__button').removeAttribute('disabled', '');
-    } else if ( !state )  {
-      button.closest('.popup__form').querySelector('.popup__button').setAttribute('disabled', '');
-    }
-  };
-
-  setEventListeners(popup) {                                   
-    popup.querySelector('.popup__form').addEventListener('input', handlerInputForm);
-    popup.querySelector('.popup__form').addEventListener('submit', sendForm)
-  };
-
-}
-
-
-
-
-// functions 
-
-
-
-
-
-// function addCard(name, link) {
-//   placesList.appendChild(makeCard(name, link));
-// };
-
-// function renderInitCards() {
-//   initialCards.forEach((item) => addCard(item.name, item.link));
-// };
-
-
-// function togglePopup(popup) {
-//   popup.classList.toggle('popup_is-opened');
-// };
-
-
 
 
 
@@ -216,7 +316,7 @@ function saveInfo(event) {
   event.preventDefault();
   personName.textContent = personNameInput.value;
   about.textContent = aboutInput.value;
-  togglePopup(editPopup);
+  editPopup.close();
 }
 
 
@@ -251,6 +351,13 @@ function resetInputs(event) {
 
 
 
+function setSubmitButtonState(button, state) {                                                           
+  if ( state ) {
+    button.closest('.popup__form').querySelector('.popup__button').removeAttribute('disabled', '');
+  } else if ( !state )  {
+    button.closest('.popup__form').querySelector('.popup__button').setAttribute('disabled', '');
+  }
+}
 
 
 
@@ -327,6 +434,13 @@ function sendForm(event) {
   }
 }
 
+
+function setEventListeners(popup) {                                   
+  popup.querySelector('.popup__form').addEventListener('input', handlerInputForm);                                           // need to be modified
+  popup.querySelector('.popup__form').addEventListener('submit', sendForm)
+}  
+
+
 function resetErrors(popup) {
   const currentForm = popup.querySelector('.popup__form');
   currentForm.reset();
@@ -339,34 +453,39 @@ function resetErrors(popup) {
 
 
 
+
 // event listeners
 
 
-addPopupOpenButton.addEventListener('click', () => { togglePopup(addPopup) });
-addPopupCloseButton.addEventListener('click', () => { togglePopup(addPopup) });
 
-placeAddButton.addEventListener('click', addNewCard);
-placesList.addEventListener('click', clickOnCard);
 
-editPopupOpenButton.addEventListener('click', () => { togglePopup(editPopup), fillInputs() });
-editPopupCloseButton.addEventListener('click', () => { togglePopup(editPopup), resetErrors(editPopup)});
+addPopupOpenButton.addEventListener('click', () =>  {                                        // modified
+  addPopup.open();
+});
+addPopupCloseButton.addEventListener('click', () =>  {                                        // modified
+  addPopup.close();
+});
+
+addForm.addEventListener('submit', function(event) {                                                      // this WORKS
+  event.preventDefault();
+  addCard();
+  addPopup.close();
+})
+
+editPopupOpenButton.addEventListener('click', () => { editPopup.open(), fillInputs() }); 
+editPopupCloseButton.addEventListener('click', () => { editPopup.close(), resetErrors(editPopup)});                      // modified    
 
 saveInfoButton.addEventListener('click', saveInfo);
 
 imagePopupCloseButton.addEventListener('click', () => {
-   togglePopup(imagePopup);
+   imagePopup.close();                                                                                  // modified
    deleteBigPhoto();
 });
 
 
-
-
-
-
 // function calls
 
+initCards.render();
 
-renderInitCards();
-
-setEventListeners(addPopup);
+setEventListeners(addPopup);                                                                                             // need to be modified
 setEventListeners(editPopup);
