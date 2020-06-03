@@ -62,15 +62,15 @@ class CardList {
     this.container = container;
     this.cards = array;
   }
-  render() {                                              // для отрисовки карточек при загрузке страницы
+  render() {                                              
     this.cards.forEach( function(card) {
       card = new Card(card.name, card.link);
       placesList.appendChild(card.create());
       card.setEventListeners();
     })    
   }
-  addNewCard(card) {                           // принимает на вход экземпляр карточки, для добавления карточки в список. предположительно бывш addNewCard
-    this.cards.push(card);                    // возможно нужно заменить card на cardElement
+  addNewCard(card) {                           
+    this.cards.push(card);                    
     this.container.appendChild(card);
     this.render();
   }
@@ -85,11 +85,11 @@ class Popup {
   }
 
   open() {
-    this.container.classList.toggle('popup_is-opened');   // заменить начало функции
+    this.container.classList.toggle('popup_is-opened');   
   }
 
   close() {
-    this.container.classList.toggle('popup_is-opened');     // заменить начало функции
+    this.container.classList.toggle('popup_is-opened');     
   }
 
   createAddPopup() {
@@ -202,7 +202,7 @@ class Popup {
   
     const secondHint = document.createElement('p');
     secondHint.classList.add('popup__hint');
-    secondHint.setAttribute('id', 'link-hint');
+    secondHint.setAttribute('id', 'about-hint');
   
     const button = document.createElement('button');
     button.classList.add('button');
@@ -237,6 +237,40 @@ class Popup {
 
     this.container.appendChild(imageBox);
   }
+
+  setEventListeners() {                              
+    this.container.querySelector('.popup__form').addEventListener('input', handlerInputForm);                                       
+    this.container.querySelector('.popup__form').addEventListener('submit', sendForm);
+  }  
+
+  resetErrors() {
+    const currentForm = this.container.querySelector('.popup__form');
+    currentForm.reset();
+    document.querySelectorAll('.popup__hint').forEach((hint) => {
+      hint.textContent = '';
+    })
+  }
+}
+
+
+
+const personName = document.querySelector('.user-info__name');
+const about = document.querySelector('.user-info__job');
+
+
+class UserInfo {
+  constructor(name, job) {
+    this.name = name;
+    this.job = job;
+  }
+  setUserInfo() {
+    this.name = personNameInput.value;
+    this.job = aboutInput.value;
+  }
+  updateUserInfo() {
+    personName.textContent = this.name;
+    about.textContent = this.job;
+  }
 }
 
 
@@ -248,9 +282,15 @@ const editPopup = new Popup(document.querySelector('.popup_type_edit'));
 const imagePopup = new Popup(document.querySelector('.popup_type_image'));
 
 
+const jaques = new UserInfo('Jaques Causteau', 'Sailor, Researcher');
+
+
 addPopup.createAddPopup();
 editPopup.createEditPopup();
 imagePopup.createImagePopup();
+
+
+
 
 // variables
 
@@ -262,8 +302,7 @@ const addPopupCloseButton = document.querySelector('.popup_type_add .popup__clos
 const editPopupOpenButton = document.querySelector('.user-info__edit-button');
 const editPopupCloseButton = document.querySelector('.popup_type_edit .popup__close');
 
-const personName = document.querySelector('.user-info__name');
-const about = document.querySelector('.user-info__job');
+
 
 const personNameInput = document.querySelector('.popup__input_type_person-name');
 const aboutInput = document.querySelector('.popup__input_type_about');
@@ -309,14 +348,6 @@ function fillInputs() {
   personNameInput.value = personName.textContent;
   aboutInput.value = about.textContent;
   saveInfoButton.removeAttribute('disabled', '');
-}
-
-
-function saveInfo(event) {
-  event.preventDefault();
-  personName.textContent = personNameInput.value;
-  about.textContent = aboutInput.value;
-  editPopup.close();
 }
 
 
@@ -435,20 +466,6 @@ function sendForm(event) {
 }
 
 
-function setEventListeners(popup) {                                   
-  popup.querySelector('.popup__form').addEventListener('input', handlerInputForm);                                           // need to be modified
-  popup.querySelector('.popup__form').addEventListener('submit', sendForm)
-}  
-
-
-function resetErrors(popup) {
-  const currentForm = popup.querySelector('.popup__form');
-  currentForm.reset();
-  document.querySelectorAll('.popup__hint').forEach((hint) => {
-    hint.textContent = '';
-  })
-}
-
 
 
 
@@ -459,33 +476,51 @@ function resetErrors(popup) {
 
 
 
-addPopupOpenButton.addEventListener('click', () =>  {                                        // modified
+addPopupOpenButton.addEventListener('click', () =>  {                                     
   addPopup.open();
 });
-addPopupCloseButton.addEventListener('click', () =>  {                                        // modified
+addPopupCloseButton.addEventListener('click', () =>  {                                        
   addPopup.close();
 });
 
-addForm.addEventListener('submit', function(event) {                                                      // this WORKS
+addForm.addEventListener('submit', function(event) {                                                  
   event.preventDefault();
   addCard();
   addPopup.close();
 })
 
-editPopupOpenButton.addEventListener('click', () => { editPopup.open(), fillInputs() }); 
-editPopupCloseButton.addEventListener('click', () => { editPopup.close(), resetErrors(editPopup)});                      // modified    
+editPopupOpenButton.addEventListener('click', () => { 
+  editPopup.open();
+  fillInputs() 
+}); 
 
-saveInfoButton.addEventListener('click', saveInfo);
+editPopupCloseButton.addEventListener('click', () => {
+  editPopup.close();
+  editPopup.resetErrors() 
+});                      
+
+saveInfoButton.addEventListener('click', function(event) {
+  event.preventDefault();
+  jaques.setUserInfo();
+  jaques.updateUserInfo();
+  editPopup.close();
+});
 
 imagePopupCloseButton.addEventListener('click', () => {
-   imagePopup.close();                                                                                  // modified
+   imagePopup.close();                                                                              
    deleteBigPhoto();
 });
 
 
+
+
+
+
 // function calls
 
+jaques.updateUserInfo();
 initCards.render();
 
-setEventListeners(addPopup);                                                                                             // need to be modified
-setEventListeners(editPopup);
+addPopup.setEventListeners();                                                                                       
+editPopup.setEventListeners();
+
