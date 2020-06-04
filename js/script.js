@@ -37,11 +37,10 @@ const imagePopupCloseButton = document.querySelector('.popup_type_image .popup__
 
 const placesList = document.querySelector('.places-list');
 const initCards = new CardList(placesList, initialCards);
+
 const addForm = document.forms.new;
 const editForm = document.forms.edit;
 
-const addFormValidator = new FormValidator(addForm);
-const editFormValidator = new FormValidator(editForm);
 
 
 
@@ -98,6 +97,8 @@ function resetInputs(event) {
 
 
 
+
+
 addPopupOpenButton.addEventListener('click', () =>  {                                     
   addPopup.open();
 });
@@ -142,7 +143,9 @@ imagePopupCloseButton.addEventListener('click', () => {
 
 jaques.updateUserInfo();
 initCards.render();
+   
 
-addFormValidator.setEventListeners();                                                                                       
-editFormValidator.setEventListeners();                                                                                       
+console.log(addPopup)
 
+setEventListeners(addForm);
+setEventListeners(editForm);

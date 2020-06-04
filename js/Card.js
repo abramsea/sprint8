@@ -12,7 +12,7 @@ class Card {
       placesList.removeChild(event.target.closest('.place-card'));
     }
   
-    create(name, link) {                                    
+    create() {                                    
       const card = document.createElement('div');
       card.classList.add('place-card');
     
