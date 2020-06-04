@@ -156,11 +156,7 @@ class Popup {
   
       this.container.appendChild(imageBox);
     }
-  
-    // setEventListeners() {                              
-    //   this.container.querySelector('.popup__form').addEventListener('input', handlerInputForm);                       // shouldn't be here                     
-    //   this.container.querySelector('.popup__form').addEventListener('submit', sendForm);
-    // }  
+                          
   
     resetErrors() {
       const currentForm = this.container.querySelector('.popup__form');

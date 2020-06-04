@@ -3,9 +3,9 @@ class CardList {
       this.container = container;
       this.cards = array;
     }
-    render = (container) => { 
+    render = () => { 
       this.cards.forEach((card) => {
-        container.append(card.cardElement)
+        this.container.append(card.cardElement)
       })
     }
 
