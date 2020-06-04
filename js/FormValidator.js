@@ -1,15 +1,54 @@
-
-
-
-
-function setSubmitButtonState(button, state) {                                                           
-  if ( state ) {
-    button.closest('.popup__form').querySelector('.popup__button').removeAttribute('disabled', '');
-  } else if ( !state )  {
-    button.closest('.popup__form').querySelector('.popup__button').setAttribute('disabled', '');
+class FormValidator {
+  constructor(form) {
+    this.form = form;
   }
-}
 
+  checkInputValidity(input) {
+    input.setCustomValidity ('');
+  
+    if (input.validity.valueMissing) {
+      input.setCustomValidity ('Это обязательное поле');
+      return false
+    }
+    if (input.validity.tooLong || input.validity.tooShort) {
+      input.setCustomValidity ('Должно быть от 2 до 30 символов');
+      return false
+    }
+    if (input.validity.typeMismatch && input.type === 'url') {
+      input.setCustomValidity ('Это не ссылка');
+      return false
+    }
+    return input.checkValidity();
+  }
+
+  setSubmitButtonState(button, state) {                                                           
+    if ( state ) {
+      button.closest('.popup__form').querySelector('.popup__button').removeAttribute('disabled', '');
+    } else if ( !state )  {
+      button.closest('.popup__form').querySelector('.popup__button').setAttribute('disabled', '');
+    }
+  }
+
+  handlerInputForm(event) {
+    const submit = event.currentTarget.querySelector('.button');
+    const [...inputs] = event.currentTarget.elements;
+    
+    isFieldValid(event.target);
+  
+    if (inputs.every(isFieldValid)) {
+      this.setSubmitButtonState(submit, true);
+    } else {
+      this.setSubmitButtonState(submit, false);
+    }
+  }
+  
+
+  setEventListeners() {                                   
+    this.form.addEventListener('input', this.handlerInputForm);
+    this.form.addEventListener('submit', sendForm)
+  }
+  
+}
 
 
 
@@ -60,18 +99,18 @@ function isFormValid(form) {
 
 
 
-function handlerInputForm(event) {
-  const submit = event.currentTarget.querySelector('.button');
-  const [...inputs] = event.currentTarget.elements;
+// function handlerInputForm(event) {
+//   const submit = event.currentTarget.querySelector('.button');
+//   const [...inputs] = event.currentTarget.elements;
   
-  isFieldValid(event.target);
+//   isFieldValid(event.target);
 
-  if (inputs.every(isFieldValid)) {
-    setSubmitButtonState(submit, true);
-  } else {
-    setSubmitButtonState(submit, false);
-  }
-}
+//   if (inputs.every(isFieldValid)) {
+//     setSubmitButtonState(submit, true);
+//   } else {
+//     setSubmitButtonState(submit, false);
+//   }
+// }
 
 
 
@@ -83,10 +122,4 @@ function sendForm(event) {
   if (isValid) {
     event.currentTarget.reset();
   }
-}
-
-
-function setEventListeners(form) {                                   
-  form.addEventListener('input', handlerInputForm);
-  form.addEventListener('submit', sendForm)
 }

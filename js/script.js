@@ -22,7 +22,6 @@ const editPopupOpenButton = document.querySelector('.user-info__edit-button');
 const editPopupCloseButton = document.querySelector('.popup_type_edit .popup__close');
 
 
-
 const personNameInput = document.querySelector('.popup__input_type_person-name');
 const aboutInput = document.querySelector('.popup__input_type_about');
 const saveInfoButton = document.querySelector('.popup__button_type_save');
@@ -35,13 +34,30 @@ const placeAddButton = document.querySelector('.popup_type_add .popup__button');
 const imagePopupCloseButton = document.querySelector('.popup_type_image .popup__close');
 
 
+const myCards = initialCards.map(item => {
+  item = new Card(item.name, item.link);
+  item.create();
+  item.setEventListeners();
+  return item
+});
+
+console.log(myCards)
+
+
 const placesList = document.querySelector('.places-list');
-const initCards = new CardList(placesList, initialCards);
+const cardList = new CardList(placesList, myCards);
+
+
+cardList.render(placesList);
 
 const addForm = document.forms.new;
 const editForm = document.forms.edit;
 
 
+const addFormValidator = new FormValidator(addForm);
+const editFormValidator = new FormValidator(editForm);
+
+console.log(addFormValidator)
 
 
 
@@ -142,10 +158,8 @@ imagePopupCloseButton.addEventListener('click', () => {
 // function calls
 
 jaques.updateUserInfo();
-initCards.render();
-   
 
-console.log(addPopup)
 
-setEventListeners(addForm);
-setEventListeners(editForm);
+
+addFormValidator.setEventListeners();
+editFormValidator.setEventListeners();
